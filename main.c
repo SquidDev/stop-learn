@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "board.h"
 #include "position.h"
+#include "board_state.h"
 
 // Between 0 and limit exclusive
 int rand_lim(int limit) {
@@ -41,6 +42,11 @@ int main(void)
 
 		Board_move(board, target->x, target->y, player);
 		Position_destroy(position);
+		
+		BoardControllers* controllers = Board_controllers(board);
+		printf("Controllers:\n");
+		Board_print(controllers);
+		free(controllers);
 
 		player = Player_other(player);
 

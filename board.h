@@ -28,6 +28,7 @@ Position* Board_moves(Board* board, uint8_t player);
 bool Board_anyMove(Board* board, uint8_t player);
 bool Board_canMove(Board* board, uint8_t player, uint8_t x, uint8_t y);
 void Board_move(Board* board, uint8_t x, uint8_t y, uint8_t player);
+void Board_override(Board* board, uint8_t x, uint8_t y, uint8_t player);
 void Board_print(Board* board);
 
 #endif

@@ -33,6 +33,9 @@ void Board_print(Board* board) {
 				case PLAYER_2:
 					printf("0");
 					break;
+				case 1:
+					printf("?");
+					break;
 			}
 			printf("|");
 		}
@@ -82,11 +85,11 @@ bool Board_canMove(Board* board, uint8_t player, uint8_t x, uint8_t y) {
 		}
 	}
 
-	if(y < NUM_COLS - 1) { // Below
+	if(y < NUM_ROWS - 1) { // Below
 		uint8_t cell = Board_cell(board, x, y + 1);
 		if(
 			(cell == player) ||
-			(cell == PLAYER_NONE && y < NUM_COLS - 2 && Board_cell(board, x, y + 2) == player)
+			(cell == PLAYER_NONE && y < NUM_ROWS - 2 && Board_cell(board, x, y + 2) == player)
 		) {
 			return true;
 		}
@@ -102,11 +105,11 @@ bool Board_canMove(Board* board, uint8_t player, uint8_t x, uint8_t y) {
 		}
 	}
 
-	if(x < NUM_ROWS - 1) { // Right
+	if(x < NUM_COLS - 1) { // Right
 		uint8_t cell = Board_cell(board, x + 1, y);
 		if(
 			(cell == player) ||
-			(cell == PLAYER_NONE && y < NUM_ROWS - 2 && Board_cell(board, x + 2, y) == player)
+			(cell == PLAYER_NONE && x < NUM_COLS - 2 && Board_cell(board, x + 2, y) == player)
 		) {
 			return true;
 		}
@@ -118,4 +121,7 @@ bool Board_canMove(Board* board, uint8_t player, uint8_t x, uint8_t y) {
 void Board_move(Board* board, uint8_t x, uint8_t y, uint8_t player) {
 	// Doesn't support overriding players. Meh.
 	board->rows[y] |= player << (x * 2);
+}
+void Board_override(Board* board, uint8_t x, uint8_t y, uint8_t player) {
+	board->rows[y] &= (~(COL_FLAG << (x * 2))) | (player << (x * 2));
 }

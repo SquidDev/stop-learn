@@ -7,24 +7,13 @@
 #include "position.h"
 #include "board_state.h"
 
-// Between 0 and limit exclusive
-int rand_lim(int limit) {
-    int divisor = RAND_MAX/limit;
-    int retval;
-
-    do {
-        retval = rand() / divisor;
-    } while (retval > limit - 1);
-
-    return retval;
-}
 
 int main(void)
 {
 	// http://stanford.edu/~loetting/MachineLearning.pdf
 	// https://en.wikipedia.org/wiki/Reinforcement_learning
 	// https://en.wikipedia.org/wiki/Markov_decision_process
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 	
 	// Board* board = Board_new();
 	// for(int i = 0; i < 8; i++) Board_move(board, i, 3, PLAYER_2);
@@ -53,7 +42,7 @@ int main(void)
 		Position* target = position;
 		
 		BoardControllers* bestController = NULL;
-		int8_t bestScore = 0;
+		int bestScore = 0;
 
 		for(int i = 0; i < position->size; i++) {
 			memcpy(testBoard, board, sizeof(Board));
@@ -61,7 +50,7 @@ int main(void)
 			Board_move(testBoard, target->x, target->y, player);
 			BoardControllers* testController = BoardControllers_new(testBoard);
 			
-			int8_t testScore = testController->counts[CTRL_OWNER_1]  - testController->counts[CTRL_OWNER_2];
+			int testScore = testController->counts[CTRL_OWNER_1]  - testController->counts[CTRL_OWNER_2];
 			if(bestController == NULL) {
 				bestScore = testScore;
 				bestController = testController;
@@ -79,13 +68,66 @@ int main(void)
 
 		// We've moved
 		memcpy(board, bestBoard, sizeof(Board));
+		// BoardControllers_print(bestController);
 		free(bestController);
 		Position_destroy(position);
+	
+		Board_print(board);
+		#if 1
+		// Check for no moves
+		position = Board_moves(board, PLAYER_2);
+		if(position == NULL) {
+			player = Player_other(player);
+			break;
+		}
 		
-		// Board_print(board);
-		// getchar();
+		int found = 0;
+		uint8_t x = 0, y = 0;
+		while(!found) {
+			unsigned int xScan = 0, yScan = 0;
+			fputs("> ", stdout);
+			
+			int c = getchar();
+			if(c == '?') {
+				printf("Read ?");
+				BoardControllers* controller = BoardControllers_new(board);
+				BoardControllers_print(controller);
+				free(controller);
+				fputs("> ", stdout);
+			} else {
+				ungetc(c, stdin);
+			}
+			while(!scanf("%u,%u", &xScan, &yScan)) { 
+				fputs("Expected 'x,y'\n> ", stdout); 
+				xScan = 0, yScan = 0;
+				while (getchar() != '\n');
+			}
+			
+			x = (uint8_t) xScan, y = (uint8_t) yScan;
+			printf("Moving to %d, %d\n", x, y);
 
-		player = Player_other(player);
+			target = position;
+			for(int i = position->size; i > 0; i--) {
+				if(target->x == x && target->y == y) {
+					found = 1;
+					break;
+				}
+				target = target->next;
+			}
+			
+			if(!found) puts("Cannot move here");
+		}
+		
+		Position_destroy(position);
+		Board_move(board, x, y, PLAYER_2);
+		#else
+			while(getchar() == '?') {
+				BoardControllers* controller = BoardControllers_new(board);
+				BoardControllers_print(controller);
+				free(controller);
+			}
+			player = Player_other(player);
+		#endif
 	}
 
 	Board_print(board);

@@ -28,6 +28,8 @@ typedef struct BoardControllers {
 uint8_t Board_controller(Board* board, uint8_t x, uint8_t y);
 BoardControllers* BoardControllers_new(Board* board);
 void BoardControllers_print(BoardControllers* controllers);
+bool BoardControllers_floodFill(BoardControllers* from, uint8_t ownerValue, uint8_t x, uint8_t y);
+char BoardControllers_char(uint8_t c);
 
 uint8_t BoardControllers_cell(BoardControllers* controllers, uint8_t x, uint8_t y);
 #endif

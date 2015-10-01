@@ -71,7 +71,7 @@ bool BoardControllers_floodFill(BoardControllers* from, uint8_t ownerValue, uint
 	
 	while(stack != NULL) {
 		Position* current = stack;
-		uint8_t x = current->x, y = current->y;
+		x = current->x, y = current->y;
 		
 		// Pop stack
 		stack = current->next;
@@ -79,7 +79,7 @@ bool BoardControllers_floodFill(BoardControllers* from, uint8_t ownerValue, uint
 
 		uint8_t value = BoardControllers_cell(from, x, y);
 		if(value == CTRL_NONE) {
-			from->rows[y] |= ownerValue << (x * CTRL_WIDTH);
+			from->rows[y] |= (unsigned int)(ownerValue << (x * CTRL_WIDTH));
 			
 			// If we've overridden this value then scan for others
 			if(x > 0) stack = Position_create(x - 1, y, stack);
@@ -109,7 +109,7 @@ BoardControllers* BoardControllers_new(Board* board) {
 				stack->size = controller; // Abuse size property
 			}
 
-			controllers->rows[y] |= controller << (x * CTRL_WIDTH);
+			controllers->rows[y] |= (unsigned int)(controller << (x * CTRL_WIDTH));
 			controllers->counts[controller]++;
 		}
 	}

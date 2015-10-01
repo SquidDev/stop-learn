@@ -7,9 +7,9 @@
 #include "position.h"
 
 Board* Board_new() {
-	Board* board = malloc(sizeof(Board));
-	board->rows[0] = PLAYER_1 << ((NUM_COLS - 1) * 2);
-	board->rows[NUM_ROWS - 1] = PLAYER_2;
+	Board* board = calloc(1, sizeof(Board));
+	board->rows[0] = PLAYER_1 << ((BOARD_SIZE - 1) * 2);
+	board->rows[BOARD_SIZE - 1] = PLAYER_2;
 	return board;
 }
 
@@ -20,9 +20,9 @@ uint8_t Board_cell(Board* board, uint8_t x, uint8_t y) { return Board_column(boa
 
 void Board_print(Board* board) {
 	printf("  0 1 2 3 4 5 6 7\n");
-	for(uint8_t y = 0; y < NUM_ROWS; ++y) {
+	for(uint8_t y = 0; y < BOARD_SIZE; ++y) {
 		printf("%d|", y);
-		for(uint8_t x = 0; x < NUM_COLS; ++x) {
+		for(uint8_t x = 0; x < BOARD_SIZE; ++x) {
 			switch(Board_cell(board, x, y)) {
 				default:
 					printf(" ");
@@ -47,8 +47,8 @@ void Board_print(Board* board) {
 Position* Board_moves(Board* board, uint8_t player) {
 	Position* position = NULL;
 
-	for(uint8_t x = 0; x < NUM_COLS; ++x) {
-		for(uint8_t y = 0; y < NUM_ROWS; ++y) {
+	for(uint8_t x = 0; x < BOARD_SIZE; ++x) {
+		for(uint8_t y = 0; y < BOARD_SIZE; ++y) {
 			if(Board_canMove(board, player, x, y)) {
 				position = Position_create(x, y, position);
 				continue;
@@ -60,8 +60,8 @@ Position* Board_moves(Board* board, uint8_t player) {
 }
 
 bool Board_anyMove(Board* board, uint8_t player) {
-	for(uint8_t x = 0; x < NUM_COLS; ++x) {
-		for(uint8_t y = 0; y < NUM_ROWS; ++y) {
+	for(uint8_t x = 0; x < BOARD_SIZE; ++x) {
+		for(uint8_t y = 0; y < BOARD_SIZE; ++y) {
 			if(Board_canMove(board, player, x, y)) {
 				return true;
 			}
@@ -85,11 +85,11 @@ bool Board_canMove(Board* board, uint8_t player, uint8_t x, uint8_t y) {
 		}
 	}
 
-	if(y < NUM_ROWS - 1) { // Below
+	if(y < BOARD_SIZE - 1) { // Below
 		uint8_t cell = Board_cell(board, x, y + 1);
 		if(
 			(cell == player) ||
-			(cell == PLAYER_NONE && y < NUM_ROWS - 2 && Board_cell(board, x, y + 2) == player)
+			(cell == PLAYER_NONE && y < BOARD_SIZE - 2 && Board_cell(board, x, y + 2) == player)
 		) {
 			return true;
 		}
@@ -105,11 +105,11 @@ bool Board_canMove(Board* board, uint8_t player, uint8_t x, uint8_t y) {
 		}
 	}
 
-	if(x < NUM_COLS - 1) { // Right
+	if(x < BOARD_SIZE - 1) { // Right
 		uint8_t cell = Board_cell(board, x + 1, y);
 		if(
 			(cell == player) ||
-			(cell == PLAYER_NONE && x < NUM_COLS - 2 && Board_cell(board, x + 2, y) == player)
+			(cell == PLAYER_NONE && x < BOARD_SIZE - 2 && Board_cell(board, x + 2, y) == player)
 		) {
 			return true;
 		}

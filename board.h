@@ -10,12 +10,11 @@
 #define PLAYER_1 2
 #define PLAYER_2 3
 
-#define NUM_ROWS 8
-#define NUM_COLS 8
+#define BOARD_SIZE 8
 #define COL_FLAG 3
 
 typedef struct Board {
-    uint16_t rows[NUM_ROWS];
+    uint16_t rows[BOARD_SIZE];
 } Board;
 
 uint8_t Player_other(uint8_t player);

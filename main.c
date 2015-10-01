@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 #include <time.h>
 #include <stdint.h>
@@ -24,8 +25,23 @@ int main(void)
 	// https://en.wikipedia.org/wiki/Reinforcement_learning
 	// https://en.wikipedia.org/wiki/Markov_decision_process
 	srand(time(NULL));
-
+	
+	// Board* board = Board_new();
+	// for(int i = 0; i < 8; i++) Board_move(board, i, 3, PLAYER_2);
+	
+	// Board_print(board);
+	
+	// BoardControllers* controller = BoardControllers_new(board);
+	// BoardControllers_print(controller);
+	
+	
+	// free(controller);
+	// free(board);
+	
 	Board* board = Board_new();
+	Board* testBoard = malloc(sizeof(Board));
+	Board* bestBoard = malloc(sizeof(Board));
+
 	uint8_t player = PLAYER_1;
 
 	Board_print(board);
@@ -34,52 +50,49 @@ int main(void)
 		if(position == NULL) break;
 
 		printf("Player %d has %d moves\n", player - 1, position->size);
-
 		Position* target = position;
-		for(int i = rand_lim(position->size); i > 0; i--) {
+		
+		BoardControllers* bestController = NULL;
+		int8_t bestScore = 0;
+
+		for(int i = 0; i < position->size; i++) {
+			memcpy(testBoard, board, sizeof(Board));
+
+			Board_move(testBoard, target->x, target->y, player);
+			BoardControllers* testController = BoardControllers_new(testBoard);
+			
+			int8_t testScore = testController->counts[CTRL_OWNER_1]  - testController->counts[CTRL_OWNER_2];
+			if(bestController == NULL) {
+				bestScore = testScore;
+				bestController = testController;
+				memcpy(bestBoard, testBoard, sizeof(Board));
+			} else if(player == PLAYER_1 ? testScore > bestScore : testScore < bestScore) { // MinMax
+				free(bestController);
+				bestScore = testScore;
+				bestController = testController;
+				memcpy(bestBoard, testBoard, sizeof(Board));
+			} else {
+				free(testController);
+			}
 			target = target->next;
 		}
 
-		Board_move(board, target->x, target->y, player);
+		// We've moved
+		memcpy(board, bestBoard, sizeof(Board));
+		free(bestController);
 		Position_destroy(position);
 		
-		BoardControllers* controllers = Board_controllers(board);
-		printf("Controllers:\n");
-		Board_print(controllers);
-		free(controllers);
+		// Board_print(board);
+		// getchar();
 
 		player = Player_other(player);
-
-		// position = Board_moves(board, PLAYER_2);
-		// if(position == NULL) {
-		// 	player = Player_other(player);
-		// 	break;
-		// }
-
-		// Board_print(board);
-		// int x, y;
-		// while(!scanf("%d,%d", &x, &y)) { printf("Invalid: Try again\n"); }
-		// printf("%d, %d\n", x, y);
-		// int found = 0;
-		// target = position;
-		// for(int i = position->size; i > 0; i--) {
-		// 	if(target->x == x && target->y == y) {
-		// 		found = 1;
-		// 		break;
-		// 	}
-		// 	target = target->next;
-		// }
-		// Position_destroy(position);
-
-		// if(found) {
-		// 	Board_move(board, x, y, PLAYER_2);
-		// } else {
-		// 	printf("Invalid move, skipping\n");
-		// }
 	}
 
 	Board_print(board);
+	
 	free(board);
+	free(testBoard);
+	free(bestBoard);
 	printf("Player %d wins!\n", Player_other(player) - 1);
 
 	return 0;

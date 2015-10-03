@@ -80,6 +80,8 @@ bool BoardControllers_floodFill(BoardControllers* from, uint8_t ownerValue, uint
 		uint8_t value = BoardControllers_cell(from, x, y);
 		if(value == CTRL_NONE) {
 			from->rows[y] |= (unsigned int)(ownerValue << (x * CTRL_WIDTH));
+			from->counts[CTRL_NONE]--;
+			from->counts[ownerValue]++;
 			
 			// If we've overridden this value then scan for others
 			if(x > 0) stack = Position_create(x - 1, y, stack);

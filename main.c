@@ -88,8 +88,9 @@ int main(void)
 			fputs("> ", stdout);
 			
 			int c = getchar();
+			while(c == '\n') c = getchar();
 			if(c == '?') {
-				printf("Read ?");
+				puts("Read ?");
 				BoardControllers* controller = BoardControllers_new(board);
 				BoardControllers_print(controller);
 				free(controller);

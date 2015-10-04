@@ -3,33 +3,50 @@
 
 #include <stdint.h>
 #include "board.h"
+#include "position.h"
 
-// The maximum value is 5, which is 3 bits long
-#define CTRL_WIDTH 4
-// We could define the flag as 15, but we don't need the spare bit
-#define CTRL_FLAG 7
+namespace StopLearn {
 
-// No-one owns it
-#define CTRL_NONE 0
+    enum class Controller : uint8_t { 
+        None = 0,
+        Occupied1 = 2,
+        Occupied2 = 3,
+        Owner1 = 4,
+        Owner2 = 5,
+        OwnerBoth = 1
+    };
+    
+    // The maximum value is 5, which is 3 bits long
+    #define CTRL_WIDTH 4
+    // We could define the flag as 15, but we don't need the spare bit
+    #define CTRL_FLAG 7
+    
+    class ControllerCell {
+        public:
+            const Position position;
+            const Controller controller;
+    };
+    
+    class ControllerMap {
+        private:
+            uint8_t counts[6] = {0};
+            uint32_t rows[BOARD_SIZE] = {0};
 
-// A place has been played here
-#define CTRL_OCCUPIED_1 2
-#define CTRL_OCCUPIED_2 3
-// A player technically can play here next move or surrounds it
-#define CTRL_OWNER_1 4
-#define CTRL_OWNER_2 5
-#define CTRL_OWNER_BOTH 1
+            static bool floodFill(ControllerMap* map, const Controller owner, const Position position);
+        public:
 
-typedef struct BoardControllers {
-    uint32_t rows[BOARD_SIZE];
-    uint8_t counts[6];
-} BoardControllers;
-
-uint8_t Board_controller(Board* board, uint8_t x, uint8_t y);
-BoardControllers* BoardControllers_new(Board* board);
-void BoardControllers_print(BoardControllers* controllers);
-bool BoardControllers_floodFill(BoardControllers* from, uint8_t ownerValue, uint8_t x, uint8_t y);
-char BoardControllers_char(uint8_t c);
-
-uint8_t BoardControllers_cell(BoardControllers* controllers, uint8_t x, uint8_t y);
+            void print() const;
+            inline Controller getCell(const Position position) const {
+                return static_cast<Controller>((rows[position.y] >> (position.x * CTRL_WIDTH)) & CTRL_FLAG);
+            }
+            inline uint8_t getCount(const Controller controller) const {
+                return counts[static_cast<uint8_t>(controller)];
+            }
+            
+            static std::unique_ptr<ControllerMap> create(const Board* board);
+    };
+    
+    Controller cellController(const Board* board, const Position position);
+    char controllerChar(const Controller controller);
+}
 #endif

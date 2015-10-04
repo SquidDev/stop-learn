@@ -3,31 +3,40 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <forward_list>
 #include "position.h"
 
-// You can swap between using ^ 1
-#define PLAYER_NONE 0
-#define PLAYER_1 2
-#define PLAYER_2 3
-
-#define BOARD_SIZE 8
 #define COL_FLAG 3
+#define BOARD_SIZE 8
 
-typedef struct Board {
-    uint16_t rows[BOARD_SIZE];
-} Board;
+namespace StopLearn {
+	enum class Player : uint8_t { None  = 0, P1 = 2, P2 = 3 };
+	
+	class Board final {
+		private:
+			uint16_t rows[BOARD_SIZE] = {};
+			bool canMove(const Position position, const Player player) const;
+		public:
+			/** Sets players in opposite corners */
+			void setup();
+	
+			/** Get player at a cell */
+			inline Player getCell(const Position position) const {
+				return static_cast<Player>((rows[position.y] >> (position.x * 2)) & COL_FLAG);
+			}
+			/** Sets a player at a cell */
+			inline void setCell(const Position position, const Player player) {
+				rows[position.y] |= static_cast<uint8_t>(player) << (position.x * 2);
+			}
+			
+			/** Get all possible moves */
+			std::unique_ptr<std::forward_list<Position>> getMoves(const Player player) const;
+			
+			/** Print the board */
+			void print() const;
+	};
+	
+	inline Player otherPlayer(Player player)  { return static_cast<Player>(1 ^ static_cast<uint8_t>(player)); }
 
-uint8_t Player_other(uint8_t player);
-
-uint8_t Board_cell(Board* board, uint8_t x, uint8_t y);
-uint8_t Board_column(uint16_t row, uint8_t column);
-
-Board* Board_new(void);
-Position* Board_moves(Board* board, uint8_t player);
-bool Board_anyMove(Board* board, uint8_t player);
-bool Board_canMove(Board* board, uint8_t player, uint8_t x, uint8_t y);
-void Board_move(Board* board, uint8_t x, uint8_t y, uint8_t player);
-void Board_override(Board* board, uint8_t x, uint8_t y, uint8_t player);
-void Board_print(Board* board);
-
+}
 #endif

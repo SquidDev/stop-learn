@@ -1,5 +1,5 @@
-#ifndef __BOARD
-#define __BOARD
+#ifndef StopLearn_board_H_
+#define StopLearn_board_H_
 
 #include <stdint.h>
 #include <stdbool.h>

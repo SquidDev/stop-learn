@@ -1,12 +1,11 @@
-#ifndef __BOARD_STATE
-#define __BOARD_STATE
+#ifndef StopLearn_scoring_controller_H_
+#define StopLearn_scoring_controller_H_
 
 #include <stdint.h>
-#include "board.h"
-#include "position.h"
+#include "../board.h"
+#include "../position.h"
 
-namespace StopLearn {
-
+namespace StopLearn { namespace Scoring {
     enum class Controller : uint8_t { 
         None = 0,
         Occupied1 = 2,
@@ -28,13 +27,10 @@ namespace StopLearn {
     };
     
     class ControllerMap {
-        private:
+        public:
             uint8_t counts[6] = {0};
             uint32_t rows[BOARD_SIZE] = {0};
-
-            static bool floodFill(ControllerMap* map, const Controller owner, const Position position);
-        public:
-
+            
             void print() const;
             inline Controller getCell(const Position position) const {
                 return static_cast<Controller>((rows[position.y] >> (position.x * CTRL_WIDTH)) & CTRL_FLAG);
@@ -42,11 +38,9 @@ namespace StopLearn {
             inline uint8_t getCount(const Controller controller) const {
                 return counts[static_cast<uint8_t>(controller)];
             }
-            
-            static std::unique_ptr<ControllerMap> create(const Board* board);
     };
     
     Controller cellController(const Board* board, const Position position);
     char controllerChar(const Controller controller);
-}
+} }
 #endif

@@ -3,10 +3,13 @@
 #include <stdint.h>
 #include "board.h"
 #include "position.h"
-#include "board_state.h"
+#include "moving.h"
+#include "scoring/controller.h"
+#include "scoring/floodFill.h"
 
 using namespace StopLearn;
-
+using namespace StopLearn::Scoring;
+using namespace StopLearn::Moving;
 
 int main(void)
 {
@@ -25,85 +28,16 @@ int main(void)
 
 	board.print();
 	while(1) {
-		{
-			auto moves = board.getMoves(player).release();
-			if(moves->empty()) break;
-			
-			ControllerMap* controller = ControllerMap::create(&board).release();
-			bool valid = controller->getCount(Controller::None) > 0 || controller->getCount(Controller::OwnerBoth) > 0;
-			
-			delete controller;
-			if(!valid) {
-				puts("No move intersections!");
-			}
-	
-			Board bestBoard;
-			int bestScore = 0;
-	
-			for(const auto& move : *moves) {
-				Board testBoard = board;
-				testBoard.setCell(move, player);
-				ControllerMap* testController = ControllerMap::create(&testBoard).release();
-				
-				int testScore = testController->getCount(Controller::Owner1)  - testController->getCount(Controller::Owner2);
-				if(player == Player::P1 ? testScore > bestScore : testScore < bestScore) { // MinMax
-					bestScore = testScore;
-					bestBoard = testBoard;
-				}
-				
-				delete testController;
-			}
-			
-			board = bestBoard;
-			delete moves;
-		
-			board.print();
+		if(!bestMove(&FloodFill::score, board, player, board)) {
+			break;
 		}
+		board.print();
 		#if 1
 		{
-			// Check for no moves
-			auto moves = board.getMoves(Player::P2).release();
-			if(moves->empty()) {
-				player = otherPlayer(player);
+			if(!userMove(board, Player::P2, board)) {
+				player = Player::P2;
 				break;
 			}
-			
-			bool found = false;
-			unsigned int x = 0, y = 0;
-			while(!found) {
-				fputs("> ", stdout);
-				
-				int c = getchar();
-				while(c == '\n') c = getchar();
-				if(c == '?') {
-					ControllerMap* controller = ControllerMap::create(&board).release();
-					controller->print();
-					delete controller;
-					fputs("> ", stdout);
-				} else {
-					ungetc(c, stdin);
-				}
-	
-				while(!scanf("%u,%u", &x, &y) || x >= BOARD_SIZE || y >= BOARD_SIZE) { 
-					fputs("Expected 'x,y'\n> ", stdout); 
-					x = 0, y = 0;
-					while (getchar() != '\n');
-				}
-				
-				printf("Moving to %d, %d\n", x, y);
-
-				for(const auto& move : *moves) {
-					if(move.x == x && move.y == y) {
-						found = true;
-						break;
-					}
-				}
-				
-				if(!found) puts("Cannot move here");
-			}
-			
-			delete moves;
-			board.setCell(POSITION(x, y), Player::P2);
 		}
 		#else
 			while(getchar() == '?') {

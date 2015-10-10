@@ -5,51 +5,51 @@
 
 using namespace std;
 namespace StopLearn { namespace Scoring {
-	Controller cellController(const Board* board, const Position position) {
+	Controller cellController(const Board& board, const Position position) {
 		#define CHECK_PLAYER(player, cell) if(cell != Player::None) { if(player == Player::None) { player = cell; } else if(player != cell) { return Controller::OwnerBoth; } }
 
 	    // Technically we don't need this.
-	    Player player = board->getCell(position);
+	    Player player = board.getCell(position);
 	    if(player != Player::None) return static_cast<Controller>(player);
 	    
 	    uint8_t x = position.x, y = position.y;
 	
 		if(y > 0) { // Above
-			Player cell = board->getCell(POSITION(x, y - 1));
+			Player cell = board.getCell(POSITION(x, y - 1));
 			if(cell != Player::None) {
 			    CHECK_PLAYER(player, cell);
 			} else if(y > 1) {
-			    cell = board->getCell(POSITION(x, y - 2));
+			    cell = board.getCell(POSITION(x, y - 2));
 			    CHECK_PLAYER(player, cell);
 			}
 		}
 	
 		if(y < BOARD_SIZE - 1) { // Below
-			Player cell = board->getCell(POSITION(x, y + 1));
+			Player cell = board.getCell(POSITION(x, y + 1));
 			if(cell != Player::None) {
 			    CHECK_PLAYER(player, cell);
 			} else if(y < BOARD_SIZE - 2) {
-			    cell = board->getCell(POSITION(x, y + 2));
+			    cell = board.getCell(POSITION(x, y + 2));
 			    CHECK_PLAYER(player, cell);
 			}
 		}
 	
 		if(x > 0) { // Left
-			Player cell = board->getCell(POSITION(x - 1, y));
+			Player cell = board.getCell(POSITION(x - 1, y));
 			if(cell != Player::None) {
 			    CHECK_PLAYER(player, cell);
 			} else if(x > 1) {
-			    cell = board->getCell(POSITION(x - 2, y));
+			    cell = board.getCell(POSITION(x - 2, y));
 			    CHECK_PLAYER(player, cell);
 			}
 		}
 	
 		if(x < BOARD_SIZE - 1) { // Right
-			Player cell = board->getCell(POSITION(x + 1, y));
+			Player cell = board.getCell(POSITION(x + 1, y));
 			if(cell != Player::None) {
 			    CHECK_PLAYER(player, cell);
 			} else if(x < BOARD_SIZE - 2) {
-			    cell = board->getCell(POSITION(x + 2, y));
+			    cell = board.getCell(POSITION(x + 2, y));
 			    CHECK_PLAYER(player, cell);
 			}
 		}

@@ -6,6 +6,7 @@
 #include "moving.h"
 #include "scoring/controller.h"
 #include "scoring/floodFill.h"
+#include "scoring/manhattan.h"
 
 using namespace StopLearn;
 using namespace StopLearn::Scoring;
@@ -23,30 +24,26 @@ int main(void)
 	
 	Board board;
 	board.setup();
-
 	Player player = Player::P1;
+	
+	BoardMover playerOne = minmax(&ManhattanMap::score, 2);
+	#if 1
+		BoardMover playerTwo = &userMove;
+	#else
+		BoardMover playerTwo = bestMove(&FloodFill::score);
+	#endif
 
-	board.print();
 	while(1) {
-		if(!bestMove(&FloodFill::score, board, player, board)) {
-			break;
-		}
+		if(!board.canMove(player)) break;
+		
+		board = playerOne(board, player);
 		board.print();
-		#if 1
-		{
-			if(!userMove(board, Player::P2, board)) {
-				player = Player::P2;
-				break;
-			}
-		}
-		#else
-			while(getchar() == '?') {
-				ControllerMap* controller = ControllerMap::create(&board).release();
-				controller->print();
-				delete controller;
-			}
-			player = otherPlayer(player);
-		#endif
+		
+		player = otherPlayer(player);
+		if(!board.canMove(player)) break;
+		board = playerTwo(board, player);
+		
+		player = otherPlayer(player);
 	}
 
 	board.print();

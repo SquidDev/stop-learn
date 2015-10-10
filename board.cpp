@@ -41,7 +41,6 @@ namespace StopLearn {
 				Position position = {x, y};
 				if(canMove(position, player)) {
 					positions->push_front(position);
-					continue;
 				}
 			}
 		}
@@ -95,6 +94,18 @@ namespace StopLearn {
 			}
 		}
 	
+		return false;
+	}
+	
+	bool Board::canMove(const Player player) const {
+		for(uint8_t x = 0; x < BOARD_SIZE; ++x) {
+			for(uint8_t y = 0; y < BOARD_SIZE; ++y) {
+				if(canMove({x, y}, player)) {
+					return true;
+				}
+			}
+		}
+		
 		return false;
 	}
 }

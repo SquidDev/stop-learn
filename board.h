@@ -32,6 +32,9 @@ namespace StopLearn {
 			/** Get all possible moves */
 			std::unique_ptr<std::forward_list<Position>> getMoves(const Player player) const;
 			
+			/** Get if the player can move. More efficient than getMoves()->empty() */
+			bool canMove(const Player player) const;
+			
 			/** Print the board */
 			void print() const;
 	};

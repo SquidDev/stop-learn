@@ -51,7 +51,7 @@ namespace StopLearn { namespace Scoring { namespace FloodFill {
 		return 0;
 	}
 
-	unique_ptr<ControllerMap> create(const Board* board) {
+	unique_ptr<ControllerMap> create(const Board& board) {
 		ControllerMap controllers;
 		
 		forward_list<ControllerCell> toFill;
@@ -83,7 +83,7 @@ namespace StopLearn { namespace Scoring { namespace FloodFill {
 		return unique_ptr<ControllerMap>(new ControllerMap(controllers));
 	}
 
-	int8_t score(const Board* board) {
+	int8_t score(const Board& board) {
 		unique_ptr<ControllerMap> controller = create(board);
 		return static_cast<int8_t>(controller->getCount(Controller::Owner1) - controller->getCount(Controller::Owner2));
 	}

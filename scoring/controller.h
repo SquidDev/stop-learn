@@ -40,7 +40,7 @@ namespace StopLearn { namespace Scoring {
             }
     };
     
-    Controller cellController(const Board* board, const Position position);
+    Controller cellController(const Board& board, const Position position);
     char controllerChar(const Controller controller);
 } }
 #endif

@@ -14,6 +14,7 @@ namespace StopLearn {
             // static_assert(y >= 0 && y < BOARD_SIZE, "Y must be between 0 and BOARD_SIZE");
             
             void print() const;
+         
     };
 }
 #endif

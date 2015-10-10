@@ -9,6 +9,7 @@ set (project_SRC
     "board.h" "board.cpp"
     "scoring/controller.h" "scoring/controller.cpp"
     "scoring/floodFill.h" "scoring/floodFill.cpp"
+    "scoring/manhattan.h" "scoring/manhattan.cpp"
     "scoring/scoring.h"
     "moving.h" "moving.cpp"
 )

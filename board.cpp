@@ -108,4 +108,27 @@ namespace StopLearn {
 		
 		return false;
 	}
+	
+	void Board::printSVG() const {
+		puts("<?xml version=\"1.0\"?>");
+		puts("<svg width=\"256\" height=\"256\" viewBox=\"0 0 8 8\" xmlns=\"http://www.w3.org/2000/svg\">");
+		
+		for(uint8_t y = 0; y < BOARD_SIZE; ++y) {
+			for(uint8_t x = 0; x < BOARD_SIZE; ++x) {
+				printf("<rect x=\"%d\" y=\"%d\" width=\"1\" height=\"1\" fill=\"none\" stroke=\"black\" stroke-width=\"0.05\" />\n", x, y);
+				switch(getCell({x, y})) {
+					case Player::None:
+						break;
+					case Player::P1:
+						printf("<circle cx=\"%d.5\" cy=\"%d.5\" r=\"0.4\" fill=\"red\"/>\n", x, y);
+						break;
+					case Player::P2:
+						printf("<circle cx=\"%d.5\" cy=\"%d.5\" r=\"0.4\"  fill=\"blue\"/>\n", x, y);
+						break;
+				}
+			}
+		}
+
+		puts("</svg>");
+	}
 }

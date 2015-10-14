@@ -37,6 +37,9 @@ namespace StopLearn {
 			
 			/** Print the board */
 			void print() const;
+			
+			/** Print the board as SVG */
+			void printSVG() const;
 	};
 	
 	inline Player otherPlayer(Player player)  { return static_cast<Player>(1 ^ static_cast<uint8_t>(player)); }

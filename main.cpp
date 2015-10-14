@@ -17,10 +17,7 @@ int main(void)
 	// http://stanford.edu/~loetting/MachineLearning.pdf
 	// https://en.wikipedia.org/wiki/Reinforcement_learning
 	// https://en.wikipedia.org/wiki/Markov_decision_process
-
-	// Or maybe:
-	// https://en.wikipedia.org/wiki/Minimax#Pseudocode
-	// https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning#Pseudocode
+	// https://www.cs.bris.ac.uk/Publications/Papers/2000100.pdf
 	
 	Board board;
 	board.setup();

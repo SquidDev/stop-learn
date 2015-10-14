@@ -122,6 +122,9 @@ namespace StopLearn { namespace Moving {
 					printf("FloodFill: %d\n", FloodFill::score(board));
 					printf("Manhattan: %d\n", ManhattanMap::score(board));
 					break;
+				case 'g':
+					board.printSVG();
+					break;
 				default:
 					ungetc(c, stdin);
 					unsigned int x, y;

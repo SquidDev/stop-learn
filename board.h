@@ -3,7 +3,8 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <forward_list>
+#include <memory>
+#include <deque>
 #include "position.h"
 
 #define COL_FLAG 3
@@ -30,7 +31,7 @@ namespace StopLearn {
 			}
 			
 			/** Get all possible moves */
-			std::unique_ptr<std::forward_list<Position>> getMoves(const Player player) const;
+			std::unique_ptr<std::deque<Position>> getMoves(const Player player) const;
 			
 			/** Get if the player can move. More efficient than getMoves()->empty() */
 			bool canMove(const Player player) const;

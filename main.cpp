@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 #include <stdint.h>
 #include "board.h"
 #include "position.h"
@@ -11,9 +12,12 @@
 using namespace StopLearn;
 using namespace StopLearn::Scoring;
 using namespace StopLearn::Moving;
+using namespace std;
 
 int main(void)
 {
+	srand(unsigned(time(0)));
+	
 	// http://stanford.edu/~loetting/MachineLearning.pdf
 	// https://en.wikipedia.org/wiki/Reinforcement_learning
 	// https://en.wikipedia.org/wiki/Markov_decision_process
@@ -27,7 +31,7 @@ int main(void)
 	#if 1
 		BoardMover playerTwo = &userMove;
 	#else
-		BoardMover playerTwo = bestMove(&FloodFill::score);
+		BoardMover playerTwo = minmax(&FloodFill::score, 2);
 	#endif
 
 	while(1) {

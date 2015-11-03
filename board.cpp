@@ -33,8 +33,8 @@ namespace StopLearn {
 		}
 	}
 	
-	unique_ptr<forward_list<Position>> Board::getMoves(const Player player) const {
-		forward_list<Position>* positions = new forward_list<Position>();
+	unique_ptr<deque<Position>> Board::getMoves(const Player player) const {
+		deque<Position>* positions = new deque<Position>();
 	
 		for(uint8_t x = 0; x < BOARD_SIZE; ++x) {
 			for(uint8_t y = 0; y < BOARD_SIZE; ++y) {
@@ -45,7 +45,7 @@ namespace StopLearn {
 			}
 		}
 	
-		return unique_ptr<forward_list<Position>>(positions);
+		return unique_ptr<deque<Position>>(positions);
 	}
 	
 	bool Board::canMove(const Position position, const Player player) const {

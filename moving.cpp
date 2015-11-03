@@ -2,7 +2,9 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include <forward_list>
+#include <memory>
+#include <deque>
+#include <algorithm>
 #include "scoring/floodFill.h"
 #include "scoring/manhattan.h"
 
@@ -11,7 +13,8 @@ using namespace StopLearn::Scoring;
 
 namespace StopLearn { namespace Moving {
     Board bestMove(const BoardScorer& scorer, const Board& board, const Player player) {
-        unique_ptr<forward_list<Position>> moves = board.getMoves(player);
+        unique_ptr<deque<Position>> moves = board.getMoves(player);
+        random_shuffle(moves->begin(), moves->end());
         
         int8_t bestScore = 0;
         bool played = false;
@@ -27,7 +30,7 @@ namespace StopLearn { namespace Moving {
 				x = move.x; y = move.y;
 				bestScore = testScore;
 				result = testBoard;
-				played = true;
+				played = true; 
 			}
 		}
 		
@@ -44,7 +47,7 @@ namespace StopLearn { namespace Moving {
     int8_t applyMinmax(const Scoring::BoardScorer& scorer, const Board& board, const Player player, const uint8_t depth, unsigned int& accum) {
     	if(depth == 0) return scorer(board);
     	
-        unique_ptr<forward_list<Position>> moves = board.getMoves(player);
+        unique_ptr<deque<Position>> moves = board.getMoves(player);
         if(moves->empty()) return scorer(board);
 
     	int8_t bestScore = 0;
@@ -69,7 +72,8 @@ namespace StopLearn { namespace Moving {
     }
     
     Board minmax(const Scoring::BoardScorer& scorer, const uint8_t depth, const Board& board, const Player player) {
-        unique_ptr<forward_list<Position>> moves = board.getMoves(player);
+        unique_ptr<deque<Position>> moves = board.getMoves(player);
+        random_shuffle(moves->begin(), moves->end());
         
         int8_t bestScore = 0;
         bool played = false;
@@ -98,8 +102,6 @@ namespace StopLearn { namespace Moving {
     }
     
     BoardMover minmax(const Scoring::BoardScorer& scorer, const uint8_t depth) {
-    	// using namespace std::placeholders;
-    	// return bind<Board, Board (const BoardScorer&, const uint8_t, const Board&, const Player), const BoardScorer&, const uint8_t>(bestMove, scorer, depth, _1, _2);
     	return [=] (const Board& board, const Player player) {
     		return minmax(scorer, depth, board, player);
     	};
@@ -139,7 +141,7 @@ namespace StopLearn { namespace Moving {
     }
     
     Board userMove(const Board& board, const Player player) {
-		unique_ptr<forward_list<Position>> moves = board.getMoves(player);
+		unique_ptr<deque<Position>> moves = board.getMoves(player);
 		
 		while(true) {
 			Position position = userSingleMove(board);

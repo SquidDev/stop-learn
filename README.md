@@ -31,6 +31,20 @@ from one of your existing pieces. You can only place a tile if you have a clear 
 ```
 
 The game ends when one player (or both) cannot play. The winner is whoever has played the most tiles.
+Sometimes the game can end despite both players can play as there are no cells in "conflict". 
+In the example below, X has one by 3 points.
+
+```
+  0 1 2 3 4 5 6 7
+0| | |X|0|X|X| |X|
+1| |X|0|0|0|X| | |
+2|X|X|0|X|0|X|X| |
+3|0|0|0|X|0|X| | |
+4| | |0|X|0|X|X| |
+5| | |0|X|0|X|X|X|
+6| | |0|X|X|X|0|0|
+7|0| |0|0|0|X|0|0|
+```
 
 ## Running:
 You'll need to setup CMake to use Clang (this isn't required, I just use Clang flags): 
@@ -53,6 +67,9 @@ The computer plays based off a min-max strategy, based off a score of the final 
 There are two scoring mechanisms: Manhattan and FloodFill. These both score the board 
 through finding each player's territory (who owns each cell).
 
+Both algorithms randomly shuffle the possible moves to show some degree of 
+"randomness" - otherwise the same game could be played every time.
+
 ### FloodFill 
 The first pass of the flood fill algorithm establishes territory based off which tiles are
 either occupied, or could be reached within one move. If both players can reach the cell within 
@@ -67,3 +84,6 @@ The Manhattan algorithm takes its name from [Manhattan Distance](https://en.wiki
 though that is not entirely accurate. Like FloodFill, each tile can be owned by either player, or "both" players.
 Instead of filling the board, each tile's owner is determined by which player would take the least number of moves
 to get to that cell.
+
+Manhattan ends up being slightly more effective, and much more efficient than FloodFill, 
+though there is more optimisation that can be done to both.

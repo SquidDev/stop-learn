@@ -85,5 +85,5 @@ though that is not entirely accurate. Like FloodFill, each tile can be owned by 
 Instead of filling the board, each tile's owner is determined by which player would take the least number of moves
 to get to that cell.
 
-Manhattan ends up being slightly more effective, and much more efficient than FloodFill, 
-though there is more optimisation that can be done to both.
+Manhattan ends up being more effective, as it does not depend on an 
+enclosed area being considered 'territory'.

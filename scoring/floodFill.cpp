@@ -7,30 +7,32 @@
 
 using namespace std;
 namespace StopLearn { namespace Scoring { namespace FloodFill {
-	uint64_t floodFill(ControllerMap* from, const uint64_t visited, const Controller owner, const Position position) {
-		if(visited == 2) puts("Is 2!");
+	uint64_t floodFill(ControllerMap* from, const uint64_t failures, const Controller owner, const Position position) {
+		uint64_t visited = 0;
+
 		queue<Position> positions;
-		{
-			uint8_t x = position.x, y = position.y;
-			if(x > 0) positions.push(POSITION(x - 1, y));
-			if(x < BOARD_SIZE - 1) positions.push(POSITION(x + 1, y));
-			if(y > 0) positions.push(POSITION(x, y - 1));
-			if(y < BOARD_SIZE - 1) positions.push(POSITION(x, y + 1));
-		}
-		
-		// uint64_t visited = 0;
-		
+		positions.push(position);
+
 		while(!positions.empty()) {
 			Position current = positions.front();
 			uint8_t x = current.x, y = current.y;
 			positions.pop();
 			
-			// uint64_t flag = 1LL << (x + (BOARD_SIZE * y));
-			// if((visited & flag) == flag) continue;
+			uint64_t flag = 1LL << (x + (BOARD_SIZE * y));
+			
+			// If we've hit a previously failed
+			if((failures & flag) == flag) {
+				return visited;
+			}
+			
+			// If we've already visited, don't bother doing anything
+			if((visited & flag) == flag) continue;
+			
 	
 			Controller value = from->getCell(current);
 			if(value == Controller::None) {
-				// visited |= flag;
+				// This is a "valid" cell, so set it as visited
+				visited |= flag;
 				
 				from->rows[y] |= static_cast<uint32_t>(owner) << (x * CTRL_WIDTH);
 				from->counts[static_cast<uint8_t>(Controller::None)]--;
@@ -42,12 +44,13 @@ namespace StopLearn { namespace Scoring { namespace FloodFill {
 				if(y > 0) positions.push(POSITION(x, y - 1));
 				if(y < BOARD_SIZE - 1) positions.push(POSITION(x, y + 1));
 			} else if(value == owner || value == static_cast<Controller>(static_cast<uint8_t>(owner) - 2)) {
-				// visited |= flag;
 			} else {
-				return 1;
+				// This is a player who isn't me, so abort.
+				return visited;
 			}
 		}
 		
+		// Everything succeeded, so just return 0.
 		return 0;
 	}
 
@@ -60,6 +63,11 @@ namespace StopLearn { namespace Scoring { namespace FloodFill {
 				Controller controller = cellController(board, {x, y});
 				if(controller == Controller::Owner1 || controller == Controller::Owner2) {
 					toFill.push_front({{x, y}, controller});
+					
+					if(x > 0) toFill.push_front({POSITION(x - 1, y), controller});
+					if(x < BOARD_SIZE - 1) toFill.push_front({POSITION(x + 1, y), controller});
+					if(y > 0) toFill.push_front({POSITION(x, y - 1), controller});
+					if(y < BOARD_SIZE - 1) toFill.push_front({POSITION(x, y + 1), controller});
 				}
 	
 				controllers.rows[y] |= static_cast<uint32_t>(controller) << (x * CTRL_WIDTH);
